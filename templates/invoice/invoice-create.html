@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% block content %}
+<br>
+<section class="hero is-fullheight">
+    <div class="container">
+        <h1 class="heading" style="background-color:#008080; color:#fff; padding:15px; text-align:center; font-size:1.5rem">Create Invoice  - Fill Below Form </h1>
+        <div class="card">
+            <div class="hero-body">
+                <form class="" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row justify-content-center my-3">
+                        <div class="col-md-3 mx-2">
+                            <h6> Customer </h6>
+                            {{ form.customer }}
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <h6>Customer Contact (if any)</h6>
+                            {{ form.customer_email }}
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <h6>Message (if any)</h6>
+                            {{ form.message }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center my-3">
+                        <div class="col-md-3 mx-2">
+                            <h6>Billing Address</h6>
+                            {{ form.billing_address }}
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <h6>Date</h6>
+                            <input class="form-control" type="date" name="date">
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <h6>Due_Date</h6>
+                            <input class="form-control" type="date" name="due_date">
+                        </div>
+                        
+                    </div>
+                    <hr>
+                    <div class="row justify-content-center my-3">
+                        <div class="col-md-3 mx-2">
+                            <h6>Sales Person</h6>
+                            {{ form.salesperson }}
+                        </div>
+                        <div class="col-md-3 mx-2">
+                            <h6>Manager</h6>
+                            {{ form.manager }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center my-3">
+                        <div class="col-md-4">
+                            <h6>Routing</h6>
+                            {{ form.routing }}
+                        </div>
+                        <div>
+                            <h6>Sale Type</h6>
+                            {{form.sale_types}}
+                        </div>
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product/Service</th>
+                                <th>Description</th>
+                                <th>QTY</th>
+                                <th>RATE</th>
+                                <th>AMOUNT$</th>
+                                <th>ADD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ formset.management_form }}
+                            {% for form in formset %}
+                            <tr>
+                                <td>{{ form.service }}</td>
+                                <td>{{ form.description }}</td>
+                                <td>{{ form.quantity }}</td>
+                                <td>{{ form.rate }}</td>
+                                <td class="amount"></td>
+                                <td>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success add-form-row">+</button>&nbsp;
+                                        <!-- <button class="btn btn-warning remove-form-row">-</button> -->
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="row spacer">
+                        <div class="col-md-4 offset-md-2">
+                            <button type="submit" class="btn btn-info btn-block">Create</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md">
+                            <h3 class="title">Total(Rs.): <span id="total"></span></h3>
+                        </div>
+                        <div class="col-md">
+                            <h3 class="title">Paid_Amount(Rs.): <span id="paid_total"></span>{{form.paid_amount}}</h3>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block custom_js %}
+
+{% comment %} for getting customer details  {% endcomment %}
+<script>
+    document.getElementById('id_customer').addEventListener('change', function() {
+        var shop_name = this.value;
+        
+        // Encode shop_name to handle spaces and special characters
+        var encodedShopName = encodeURIComponent(shop_name);
+        
+        // Make AJAX request to fetch customer details
+        fetch(`http://127.0.0.1:8000/invoice/get-customer-details/${encodedShopName}/`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Populate billing address and contact fields with retrieved data
+            document.getElementById('billing_address').value = data.address;
+            document.getElementById('contact').value = data.owner_number;
+          })
+          .catch(error => {
+            console.error('Error fetching customer details:', error);
+            // Optionally, display an error message to the user
+          });
+      });
+      
+</script>
+
+{% comment %} for fetching product details  {% endcomment %}
+{% comment %} <script>
+document.getElementById('id_product_name').addEventListener('change', function() {
+    var product_name = this.value;
+
+     // Encode shop_name to handle spaces and special characters
+     var encodedShopName = encodeURIComponent(product_name);
+    
+    fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${product_name}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('rate').value = data.rate;
+        })
+        .catch(error => {
+            console.error('Error fetching product rate:', error);
+            // Optionally, display an error message to the user
+        });
+});
+</script>  {% endcomment %}
+
+{% comment %} 2 searchby classname {% endcomment %}
+{% comment %} <script>
+    document.getElementById('id_product_name').addEventListener('change', function() {
+        var product_name = this.value;
+    
+         // Encode shop_name to handle spaces and special characters
+         var encodedShopName = encodeURIComponent(product_name);
+        
+        fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${product_name}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var rateInputs = document.querySelectorAll('.myrate');
+                rateInputs.forEach(function(rateInput) {
+                    rateInput.value = data.rate;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching product rate:', error);
+                // Optionally, display an error message to the user
+            });
+    });
+</script>  {% endcomment %}
+
+{% comment %} 3 seachby new classes added {% endcomment %}
+<script>
+// Function to handle change event on product select
+function handleProductChange(event) {
+    console.log("Change event triggered");
+    var product_name = event.target.value;
+    var encodedProductName = encodeURIComponent(product_name);
+
+    fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${encodedProductName}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var rateInputs = document.querySelectorAll('.myrate, [class^="myrate"]');
+            rateInputs.forEach(function(rateInput) {
+                rateInput.value = data.rate;
+            });
+            console.log("Rate inputs updated");
+        })
+        .catch(error => {
+            console.error('Error fetching product rate:', error);
+            // Optionally, display an error message to the user
+        });
+}
+
+// Event listener callback function
+function eventListenerCallback(event) {
+    console.log("Change event listener triggered");
+    if (event.target.id === 'id_product_name' || event.target.classList.contains('myrate') || event.target.classList.contains('myrate1')) {
+        handleProductChange(event);
+    }
+}
+
+// Function to attach event listener
+function attachEventListener() {
+    console.log("Attaching event listener");
+    document.body.addEventListener('change', eventListenerCallback);
+}
+
+// Attach event listener initially
+attachEventListener();
+</script>
+
+
+
+{% comment %} ====== {% endcomment %}
+
+    
+
+
+
+
+
+
+ {% comment %} calculating total  {% endcomment %}
+<script type="text/javascript">
+    $('table input').on("input", function () {
+        var total = []
+        var $tr = $(this).closest('tr');
+        var textValue1 = $("input.rate", $tr).val();
+        var textValue2 = $('input.quantity', $tr).val();
+        amt = textValue1 * textValue2;
+        // console.log(amt);
+        $('.amount', $tr).html(amt);
+        calc_total();
+    });
+
+    function calc_total() {
+        var sum = 0;
+        $(".amount").each(function () {
+            sum += parseFloat($(this).text());
+        });
+        console.log(sum);
+        $('#total').text(sum);
+    }
+</script>  
+
+
+
+{% comment %} previous working cloning {% endcomment %}
+{% comment %} <script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        console.log(newElement);
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+            var name = $(this).attr('name')
+            if (name) {
+                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+            }
+        });
+        newElement.find('label').each(function () {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                $(this).attr({ 'for': forValue });
+            }
+        });
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        // $("div.form-row.button.is-primary").not(":last").hide();
+        // var conditionRow = $('.form-row:not(:last)');
+        // conditionRow.find('.button.is-primary')
+        // .hide();
+        // .removeClass('btn-success').addClass('btn-danger')
+        // .removeClass('add-form-row').addClass('remove-form-row')
+        // .html('-');
+        return false;
+    }
+    function deleteForm(prefix, btn) {
+        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (total > 1) {
+            btn.closest('.form-row').remove();
+            var forms = $('.form-row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find(':input').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+        }
+        return false;
+    } 
+    $(document).on('click', '.add-form-row', function (e) {
+        e.preventDefault();
+        cloneMore('table tr:last', 'form');
+        return false;
+    });
+    $(document).on('click', '.remove-form-row', function (e) {
+        e.preventDefault();
+        deleteForm('form', $(this));
+        return false;
+    }); 
+
+</script>   {% endcomment %}
+
+
+
+{% comment %} its working now cloning after adding classes {% endcomment %}
+<script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+function cloneMore(selector, prefix) {
+    var newElement = $(selector).clone(true);
+    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+
+    newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+        var name = $(this).attr('name');
+        if (name) {
+            name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+            var id = 'id_' + name;
+            $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+
+            // Add classes for rate inputs
+            if ($(this).hasClass('rate')) {
+                var rateClass = 'myrate' + total;
+                $(this).addClass(rateClass);
+                {% comment %} console.log("Rate input class added: " + rateClass); {% endcomment %}
+            }
+        }
+    });
+
+    newElement.find('label').each(function () {
+        var forValue = $(this).attr('for');
+        if (forValue) {
+            forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+            $(this).attr({ 'for': forValue });
+        }
+    });
+
+    total++;
+    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    $(selector).after(newElement);
+
+    return false;
+}
+$(document).on('click', '.add-form-row', function (e) {
+    e.preventDefault();
+    cloneMore('table tr:last', 'form');
+    return false;
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
