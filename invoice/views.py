@@ -306,32 +306,77 @@ def create_recovery(request, id):
      invoice = get_object_or_404(Invoice, id=id)
      if request.method=="POST":
         customer = invoice.customer
-        total_amount = invoice.total_amount
+        # total_amount = invoice.total_amount
+        total_amount = Decimal(invoice.total_amount)
         total_amount= Decimal(total_amount)
         date = invoice.date.strftime('%Y-%m-%d')
         balance = invoice.balance
-        # existing_balance=Decimal(balance)
-        existing_paid_amount=Invoice.paid_amount
+        existing_paid_amount = Decimal(invoice.paid_amount)
+        # existing_paid_amount=Invoice.paid_amount
         new_paid_amount_str = request.POST.get('new_paid_amount', '')
-        # Convert new_paid_amount to Decimal
         new_paid_amount = Decimal(new_paid_amount_str)
-        current_balance = invoice.total_amount - new_paid_amount
+        current_balance = (invoice.total_amount - (new_paid_amount+existing_paid_amount))
         recovery = Recovery(customer_name=customer, total_amount=total_amount, date=date, balance=balance,new_paid_amount=new_paid_amount,current_balance=current_balance)
         recovery.save()
         # Update the invoice's paid_amount field by adding new_paid_amount to it
-        # with transaction.atomic():
-        #     Invoice.objects.filter(id=id).update(
-        #         paid_amount=F('paid_amount') + new_paid_amount,
-        #         # previous_balance=F('balance'),
-        #         # balance=F('current_balance'),
-        #     )
-        # with transaction.atomic():
-        #         Invoice.objects.filter(id=id).update(paid_amount=F('paid_amount') + new_paid_amount)
-        # # with transaction.atomic():
-        # #         Invoice.objects.filter(id=id).update(previous_balance=F('previous_balance') + balance)
-        # with transaction.atomic():
-        #         Invoice.objects.filter(id=id).update(balance=F('balance') + current_balance)
+        with transaction.atomic():
+            Invoice.objects.filter(id=id).update(
+                paid_amount=F('paid_amount') + new_paid_amount,
+                previous_balance=F('previous_balance')+ balance,
+                balance=current_balance,
+            )
 
         thank=True
+        return redirect('invoice:invoice-list')
      
      return render(request, 'invoice/recovery_form.html', {'thank':thank,'invoice_id': id})
+
+def recovery_list(request):
+    recoveryies_fetched = Recovery.objects.all().order_by("-id")
+    # print(days_fetched)
+    return render(request, 'invoice/Recovery_list.html', {'recoveryies_fetched': recoveryies_fetched})
+
+from openpyxl import Workbook
+
+def generate_invoice_excel_report(request):
+    if request.method == 'GET':
+            # Handle GET request (render a form, for example)
+            return render(request, 'invoice/main_invoice_excel.html', context={})
+    elif request.method == 'POST':
+        # Fetch all invoices from the database
+        invoices = Invoice.objects.all()
+
+        # Create a new Excel workbook
+        wb = Workbook()
+
+        # Add a worksheet for the report
+        ws = wb.active
+        ws.title = "Invoice Report"
+
+        # Write headers
+        headers = [
+            "Customer", "Customer Email", "Billing Address", "Date", "Due Date", "Message",
+            "Total Amount", "Salesperson", "Manager", "Routing", "Paid Amount", "Balance",
+            "Previous Balance", "Sale Types", "Status"
+        ]
+        ws.append(headers)
+
+        # Write invoice data rows
+        for invoice in invoices:
+            row = [
+                invoice.customer, invoice.customer_email, invoice.billing_address,
+                invoice.date, invoice.due_date, invoice.message,
+                invoice.total_amount, invoice.salesperson, invoice.manager,
+                invoice.routing, invoice.paid_amount, invoice.balance,
+                invoice.previous_balance, invoice.sale_types, invoice.status
+            ]
+            ws.append(row)
+
+        # Create HTTP response with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=invoice_report.xlsx'
+
+        # Save the workbook to the HTTP response
+        wb.save(response)
+
+        return response

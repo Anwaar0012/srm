@@ -60,7 +60,7 @@ def delete_manager(request, manager_id):
 
 def days_list(request):
     days_fetched = DaysEntry.objects.all()
-    print(days_fetched)
+    # print(days_fetched)
     return render(request, 'myapp/days/days_list.html', {'days_fetched': days_fetched})
 
 def add_day(request):
