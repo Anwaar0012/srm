@@ -345,14 +345,11 @@ def generate_invoice_excel_report(request):
     elif request.method == 'POST':
         # Fetch all invoices from the database
         invoices = Invoice.objects.all()
-
         # Create a new Excel workbook
         wb = Workbook()
-
         # Add a worksheet for the report
         ws = wb.active
         ws.title = "Invoice Report"
-
         # Write headers
         headers = [
             "Customer", "Customer Email", "Billing Address", "Date", "Due Date", "Message",
@@ -360,7 +357,6 @@ def generate_invoice_excel_report(request):
             "Previous Balance", "Sale Types", "Status"
         ]
         ws.append(headers)
-
         # Write invoice data rows
         for invoice in invoices:
             row = [
@@ -371,11 +367,74 @@ def generate_invoice_excel_report(request):
                 invoice.previous_balance, invoice.sale_types, invoice.status
             ]
             ws.append(row)
-
         # Create HTTP response with Excel content type
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=invoice_report.xlsx'
+        # Save the workbook to the HTTP response
+        wb.save(response)
 
+        return response
+    
+# name,address,owner_number,owner_cnic
+def generate_shop_excel_report(request):
+    if request.method == 'GET':
+            # Handle GET request (render a form, for example)
+            return render(request, 'invoice/main_shop_excel.html', context={})
+    elif request.method == 'POST':
+        # Fetch all invoices from the database
+        shops = Shop.objects.all()
+        # Create a new Excel workbook
+        wb = Workbook()
+        # Add a worksheet for the report
+        ws = wb.active
+        ws.title = "Shop List Report "
+        # Write headers
+        headers = [
+            "name", "address", "owner_number", "owner_cnic"
+        ]
+        ws.append(headers)
+        # Write invoice data rows
+        for shop in shops:
+            row = [
+                shop.name, shop.address, shop.owner_number,
+                shop.owner_cnic
+            ]
+            ws.append(row)
+        # Create HTTP response with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=shops_report.xlsx'
+        # Save the workbook to the HTTP response
+        wb.save(response)
+
+        return response
+    # name,address,owner_number,owner_cnic
+def generate_recoveries_excel_report(request):
+    if request.method == 'GET':
+            # Handle GET request (render a form, for example)
+            return render(request, 'invoice/main_recoveries_excel.html', context={})
+    elif request.method == 'POST':
+        # Fetch all invoices from the database
+        recoveries = Recovery.objects.all()
+        # Create a new Excel workbook
+        wb = Workbook()
+        # Add a worksheet for the report
+        ws = wb.active
+        ws.title = "Shop List Report "
+        # Write headers
+        headers = [
+            "Customer/Shop Name", "Total Sale Amount", "Order Date", "Previous Balance",'Recovery/Updated Date','Recovered Amount','Current Balance(payable)'
+        ]
+        ws.append(headers)
+        # Write invoice data rows
+        for recovery in recoveries:
+            row = [
+                recovery.customer_name, recovery.total_amount, recovery.date,
+                recovery.balance,recovery.updated_date,recovery.new_paid_amount,recovery.current_balance
+            ]
+            ws.append(row)
+        # Create HTTP response with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=Recoveries_report.xlsx'
         # Save the workbook to the HTTP response
         wb.save(response)
 

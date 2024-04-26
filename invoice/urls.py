@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import InvoiceListView, createInvoice, view_PDF,get_details_customer,get_product_rate,create_recovery,recovery_list,generate_invoice_excel_report
+from .views import InvoiceListView, createInvoice, view_PDF,get_details_customer,get_product_rate,create_recovery,recovery_list,generate_invoice_excel_report,generate_shop_excel_report,generate_recoveries_excel_report
 
 app_name = 'invoice'
 urlpatterns = [
@@ -13,6 +13,8 @@ urlpatterns = [
     path('get-customer-details/<str:shop_name>/', get_details_customer, name='get_customer_details'),
     path('get-product-rate/<str:product_name>/', get_product_rate, name='get_product_rate'),
     path('gen-report-invoice/', generate_invoice_excel_report, name='generate_invoice_report'),
+    path('gen-report-shops/', generate_shop_excel_report, name='generate_shops_report'),
+    path('gen-report-recovery/', generate_recoveries_excel_report, name='generate_recovery_report'),
 
 
 ]
