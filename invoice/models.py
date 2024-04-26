@@ -2,6 +2,18 @@ from decimal import Decimal
 from django.db import models
 import datetime
 # Create your models here.
+class InvoiceManager(models.Manager):
+    def search(self, search_query=None):
+        if search_query:
+            return self.get_queryset().filter(
+                models.Q(customer__icontains=search_query) |
+                models.Q(salesperson__icontains=search_query) |
+                models.Q(manager__icontains=search_query) |
+                models.Q(date__icontains=search_query)
+            )
+        else:
+            return self.get_queryset()
+    
 class Invoice(models.Model):
     customer = models.CharField(max_length=100)
     customer_email = models.TextField(null=True, blank=True)
@@ -19,6 +31,8 @@ class Invoice(models.Model):
     # current_balance=models.DecimalField(max_digits=9, decimal_places=2, default=0)
     sale_types = models.CharField(max_length=255, blank=True, null=True)
     status = models.BooleanField(default=False)
+
+    objects = InvoiceManager()
     
 
     # def save(self, *args, **kwargs):

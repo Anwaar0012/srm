@@ -169,8 +169,17 @@ def shop_list(request):
     # shops = Shop.objects.order_by('-id')
     return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
 #=== shop_list views function
+# def shop_list(request):
+#     shops = Shop.objects.all().order_by('-id')
+#     # shops = Shop.objects.order_by('-id')
+#     return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
+
 def shop_list(request):
-    shops = Shop.objects.all().order_by('-id')
+    search_query = request.GET.get('q', '')
+    if search_query:  # If a search query is provided
+        shops = Shop.objects.search(search_query).order_by('-id')
+    else:
+        shops = Shop.objects.all().order_by('-id')
     # shops = Shop.objects.order_by('-id')
     return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
 
@@ -314,8 +323,18 @@ def claim_delete(request, pk):
     return render(request, 'myapp/claim/delete_claim.html', {'claim': claim})
 
 #=== transaction_list views function
+# def transaction_list(request):
+#     transactions = Invoice.objects.all().order_by('-id')
+#     return render(request, 'myapp/transaction/transaction_list.html', {'transactions': transactions})
+from django.db.models import Q
+
 def transaction_list(request):
-    transactions = Invoice.objects.all().order_by('-id')
+    search_query = request.GET.get('q', '')  # Get the search query from the request GET parameters
+    if search_query:  # If a search query is provided
+        transactions = Invoice.objects.search(search_query).order_by('-id')
+    else:
+        transactions = Invoice.objects.all().order_by('-id')
+    
     return render(request, 'myapp/transaction/transaction_list.html', {'transactions': transactions})
 
 #=== add_transaction views function

@@ -2,10 +2,20 @@
 {% block shopsactive %} active {% endblock shopsactive %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container-fluid mt-4 px-0">
     <!-- Link to Add Shop page -->
     <a href="{% url 'add_shop' %}" class="btn btn-primary mb-3">Add Shop</a>
-    <!-- Table to display shops data -->
+    <!-- Search form -->
+    <form method="GET" action="{% url 'shop_list' %}" class="mb-3">
+        {% comment %} <form method="GET" action="" class="mb-3"> {% endcomment %}
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search by Name, address, owner_number, owner_cnic" value="{{ request.GET.q }}">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+    <!-- Table to display shops kdata -->
     <table class="table">
         <thead>
             <tr>

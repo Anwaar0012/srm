@@ -9,11 +9,25 @@ class Manager(models.Model):
         return self.managersname
     
 # Create your models here.
+class ShopManager(models.Manager):
+    def search(self, search_query=None):
+        if search_query:
+            return self.get_queryset().filter(
+                models.Q(name__icontains=search_query) |
+                models.Q(address__icontains=search_query) |
+                models.Q(owner_number__icontains=search_query) |
+                models.Q(owner_cnic__icontains=search_query)
+            )
+        else:
+            return self.get_queryset()
+        
 class Shop(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
     owner_number = models.CharField(max_length=20,null=True,blank=True)
     owner_cnic = models.CharField(max_length=15,null=True,blank=True)
+
+    objects = ShopManager()
 
     def __str__(self):
         return self.name
