@@ -322,7 +322,8 @@ def create_recovery(request, id):
         with transaction.atomic():
             Invoice.objects.filter(id=id).update(
                 paid_amount=F('paid_amount') + new_paid_amount,
-                previous_balance=F('previous_balance')+ balance,
+                # previous_balance=F('previous_balance')+ balance,
+                previous_balance=balance,
                 balance=current_balance,
             )
 

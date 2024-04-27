@@ -80,8 +80,8 @@
                                 <td class="amount"></td>
                                 <td>
                                     <div class="input-group-append">
-                                        <button class="btn btn-success add-form-row">+</button>&nbsp;
-                                        <!-- <button class="btn btn-warning remove-form-row">-</button> -->
+                                        <button class="btn btn-success add-form-row ">+</button>&nbsp;
+                                        <button class="btn btn-warning remove-form-row" style="display: none;">-</button>
                                     </div>
                                 </td>
                             </tr>
@@ -114,7 +114,7 @@
 
 {% block custom_js %}
 
-{% comment %} for getting customer details  {% endcomment %}
+<!-- for getting customer details -->
 <script>
     document.getElementById('id_customer').addEventListener('change', function() {
         var shop_name = this.value;
@@ -143,40 +143,16 @@
       
 </script>
 
-{% comment %} for fetching product details  {% endcomment %}
-{% comment %} <script>
-document.getElementById('id_product_name').addEventListener('change', function() {
-    var product_name = this.value;
 
-     // Encode shop_name to handle spaces and special characters
-     var encodedShopName = encodeURIComponent(product_name);
-    
-    fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${product_name}/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('rate').value = data.rate;
-        })
-        .catch(error => {
-            console.error('Error fetching product rate:', error);
-            // Optionally, display an error message to the user
-        });
-});
-</script>  {% endcomment %}
+<!-- {===4 FOR GETING RATE AND POPULATE RATE BY SELECTING PRODUCTclassname ====== -->
+<script>
+    // Function to handle change event on product select
+    function handleProductChange(event) {
+        console.log("Change event triggered");
+        var product_name = event.target.value;
+        var encodedProductName = encodeURIComponent(product_name);
 
-{% comment %} 2 searchby classname {% endcomment %}
-{% comment %} <script>
-    document.getElementById('id_product_name').addEventListener('change', function() {
-        var product_name = this.value;
-    
-         // Encode shop_name to handle spaces and special characters
-         var encodedShopName = encodeURIComponent(product_name);
-        
-        fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${product_name}/`)
+        fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${encodedProductName}/`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -184,76 +160,37 @@ document.getElementById('id_product_name').addEventListener('change', function()
                 return response.json();
             })
             .then(data => {
-                var rateInputs = document.querySelectorAll('.myrate');
-                rateInputs.forEach(function(rateInput) {
-                    rateInput.value = data.rate;
-                });
+                // Find the rate input relative to the changed product select
+                var rateInput = event.target.parentElement.parentElement.querySelector('.myrate');
+                rateInput.value = data.rate;
+                console.log("Rate input updated");
             })
             .catch(error => {
                 console.error('Error fetching product rate:', error);
                 // Optionally, display an error message to the user
             });
-    });
-</script>  {% endcomment %}
-
-{% comment %} 3 seachby new classes added {% endcomment %}
-<script>
-// Function to handle change event on product select
-function handleProductChange(event) {
-    console.log("Change event triggered");
-    var product_name = event.target.value;
-    var encodedProductName = encodeURIComponent(product_name);
-
-    fetch(`http://127.0.0.1:8000/invoice/get-product-rate/${encodedProductName}/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            var rateInputs = document.querySelectorAll('.myrate, [class^="myrate"]');
-            rateInputs.forEach(function(rateInput) {
-                rateInput.value = data.rate;
-            });
-            console.log("Rate inputs updated");
-        })
-        .catch(error => {
-            console.error('Error fetching product rate:', error);
-            // Optionally, display an error message to the user
-        });
-}
-
-// Event listener callback function
-function eventListenerCallback(event) {
-    console.log("Change event listener triggered");
-    if (event.target.id === 'id_product_name' || event.target.classList.contains('myrate') || event.target.classList.contains('myrate1')) {
-        handleProductChange(event);
     }
-}
 
-// Function to attach event listener
-function attachEventListener() {
-    console.log("Attaching event listener");
-    document.body.addEventListener('change', eventListenerCallback);
-}
+    // Event listener callback function
+    function eventListenerCallback(event) {
+        console.log("Change event listener triggered");
+        if (event.target.classList.contains('product-select')) {
+            handleProductChange(event);
+        }
+    }
 
-// Attach event listener initially
-attachEventListener();
+    // Function to attach event listener
+    function attachEventListener() {
+        console.log("Attaching event listener");
+        document.body.addEventListener('change', eventListenerCallback);
+    }
+
+    // Attach event listener initially
+    attachEventListener();
 </script>
 
 
-
-{% comment %} ====== {% endcomment %}
-
-    
-
-
-
-
-
-
- {% comment %} calculating total  {% endcomment %}
+ <!-- CALCULATING TOTAL   -->
 <script type="text/javascript">
     $('table input').on("input", function () {
         var total = []
@@ -276,10 +213,8 @@ attachEventListener();
     }
 </script>  
 
-
-
-{% comment %} previous working cloning {% endcomment %}
-{% comment %} <script type="text/javascript">
+<!-- previous working cloning Functionality  -->
+<script type="text/javascript">
     function updateElementIndex(el, prefix, ndx) {
         var id_regex = new RegExp('(' + prefix + '-\\d+)');
         var replacement = prefix + '-' + ndx;
@@ -312,11 +247,11 @@ attachEventListener();
         // $("div.form-row.button.is-primary").not(":last").hide();
         // var conditionRow = $('.form-row:not(:last)');
         // conditionRow.find('.button.is-primary')
-        // .hide();
+        // .hide()
         // .removeClass('btn-success').addClass('btn-danger')
         // .removeClass('add-form-row').addClass('remove-form-row')
         // .html('-');
-        return false;
+        return false; 
     }
     function deleteForm(prefix, btn) {
         var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
@@ -342,70 +277,6 @@ attachEventListener();
         deleteForm('form', $(this));
         return false;
     }); 
-
-</script>   {% endcomment %}
-
-
-
-{% comment %} its working now cloning after adding classes {% endcomment %}
-<script type="text/javascript">
-    function updateElementIndex(el, prefix, ndx) {
-        var id_regex = new RegExp('(' + prefix + '-\\d+)');
-        var replacement = prefix + '-' + ndx;
-        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-        if (el.id) el.id = el.id.replace(id_regex, replacement);
-        if (el.name) el.name = el.name.replace(id_regex, replacement);
-    }
-function cloneMore(selector, prefix) {
-    var newElement = $(selector).clone(true);
-    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-
-    newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
-        var name = $(this).attr('name');
-        if (name) {
-            name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
-            var id = 'id_' + name;
-            $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
-
-            // Add classes for rate inputs
-            if ($(this).hasClass('rate')) {
-                var rateClass = 'myrate' + total;
-                $(this).addClass(rateClass);
-                {% comment %} console.log("Rate input class added: " + rateClass); {% endcomment %}
-            }
-        }
-    });
-
-    newElement.find('label').each(function () {
-        var forValue = $(this).attr('for');
-        if (forValue) {
-            forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
-            $(this).attr({ 'for': forValue });
-        }
-    });
-
-    total++;
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-    $(selector).after(newElement);
-
-    return false;
-}
-$(document).on('click', '.add-form-row', function (e) {
-    e.preventDefault();
-    cloneMore('table tr:last', 'form');
-    return false;
-});
-
-</script>
-
-
-
-
-
-
-
-
-
-
+</script> 
 
 {% endblock %}

@@ -167,8 +167,8 @@ class LineItemForm(forms.Form):
         label='Service/Product',
         to_field_name='product_name',        
         widget=forms.Select(attrs={
-            'id': 'id_product_name',  # Add the id attribute here
-            'class': 'form-control',
+            # 'id': 'id_product_name',  # Add the id attribute here
+            'class': 'form-control product-select',
         })
     )
     description = forms.CharField(
