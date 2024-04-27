@@ -111,8 +111,6 @@ def view_PDF(request, id=None):
     invoice = get_object_or_404(Invoice, id=id)
     lineitem = invoice.lineitem_set.all()
 
-    # Get the current date
-    # current_date = timezone.now()
 
     # Extract day, month, and year components from the due_date
     invoice_date = invoice.date
@@ -150,94 +148,6 @@ def generate_PDF(request, id):
     response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
 
     return response
-
-# def get_recovery_data(request, id):
-    
-#     invoice = get_object_or_404(Invoice, id=id)
-#     data = {
-#         'invoice_id': invoice.id,
-#         'customer': invoice.customer,
-#         'total_amount': invoice.customer,
-#         'date': invoice.date.strftime('%Y-%m-%d')
-#     }
-#     return HttpResponse(json.dumps(data), content_type='application/json')
-
-# def create_recovery(request,id):
-#     invoice = get_object_or_404(Invoice, id=id)
-#     data = {
-#         'invoice_id': invoice.id,
-#         'customer': invoice.customer,
-#         'total_amount': invoice.customer,
-#         'date': invoice.date.strftime('%Y-%m-%d')
-#     }
-#     return HttpResponse(json.dumps(data), content_type='application/json')
-    
-    # if request.method == 'POST':
-
-    #     form = RecoveryForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('success_url')  # Replace 'success_url' with the URL to redirect to after successful form submission
-    # else:
-    #     form = RecoveryForm()
-    # return render(request, 'invoice/recovery_form.html', {'form': form})
-
-# def create_recovery(request, id):
-#     print("Enter the create_recovery")
-#     invoice = get_object_or_404(Invoice, id=id)
-#     print("outside the post method")
-#     if request.method == 'POST':
-#         print("came in post ")
-#         form = RecoveryForm(request.POST)
-#         if form.is_valid():
-#             print("came into form validation")
-
-#             new_paid_amount = form.cleaned_data['new_paid_amount']
-#             current_balance = invoice.total_amount - new_paid_amount
-
-#             # Print out values for debugging
-#             print("New Paid Amount:", new_paid_amount)
-#             print("Current Balance:", current_balance)
-#             print("Updated Date:", form.cleaned_data['updated_date'])
-
-#             recovery = Recovery(
-#                 customer_name=invoice.customer,
-#                 total_amount=invoice.total_amount,
-#                 date=invoice.date,
-#                 balance=invoice.balance,
-#                 updated_date=form.cleaned_data['updated_date'],
-#                 new_paid_amount=new_paid_amount,
-#                 current_balance=current_balance
-#             )
-#             recovery.save()
-#             print(" data saved")
-#     else:
-#         form = RecoveryForm()
-#         print("using else statiement")
-
-#     data = {
-#         'invoice_id': invoice.id,
-#         'customer': invoice.customer,
-#         'total_amount': invoice.total_amount,
-#         'date': invoice.date.strftime('%Y-%m-%d'),
-#         'balance': invoice.balance,
-#         'form': form,
-#     }
-#     return render(request, 'invoice/recovery_form.html', data)
-
-
-
-
-# class Recovery(View):
-#     def get(self, *args, **kwargs):
-#         invoices = Invoice.objects.all().order_by("-id")
-#         context = {
-#             "invoices":invoices,
-#         }
-
-#         return render(self.request, 'invoice/invoice-list.html', context)
-    
-
 
 # def change_status(request):
 #     return redirect('invoice:invoice-list')

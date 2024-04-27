@@ -1,17 +1,28 @@
 {% extends 'base.html' %}
 {% block transactionsactive %} active {% endblock %}
 
-
 {% block content %}
 <div class="container-fluid mt-4 px-0">
     <!-- Search form -->
     <form method="GET" action="{% url 'transaction_list' %}" class="mb-3">
-    {% comment %} <form method="GET" action="" class="mb-3"> {% endcomment %}
-        <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search by customer Name, salesperson, manager, or or date: as (YYYY-MM-DD)" value="{{ request.GET.q }}">
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">Search</button>
+        <div class="form-row my-2">
+        <div class="col">
+            <label for="searchbyName"><b>Search by customer/Shop Name, salesperson, manager, or date (YYYY-MM-DD)</b></label>
+            <input type="text" name="q" class="form-control" placeholder="Search by customer Name, salesperson, manager, or date (YYYY-MM-DD)" value="{{ request.GET.q }}">
+        </div>
+    </div> 
+        <div class="form-row">
+            <div class="col-auto">
+                <label for="fromDate"><b>From</b></label>
+                <input type="date" name="start_date" class="form-control" placeholder="Start Date" value="{{ request.GET.start_date }}">
             </div>
+            <div class="col-auto">
+                <label for="toDate"><b>To</b></label>
+                <input type="date" name="end_date" class="form-control" placeholder="End Date" value="{{ request.GET.end_date }}">
+            </div>
+        </div>
+        <div class="input-group">
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
         </div>
     </form>
 
@@ -43,7 +54,7 @@
                     <td>{{ transaction.paid_amount }}</td>
                     <td>{{ transaction.balance }}</td>
                     <td>
-                        {% comment %} <a href="{% url 'delete_transaction' transaction.id %}" class="btn btn-sm btn-danger">Delete</a> {% endcomment %}
+                        <!-- Add your delete button here -->
                     </td>
                 </tr>
                 {% endfor %}

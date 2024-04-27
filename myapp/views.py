@@ -1,10 +1,13 @@
+import datetime
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.decorators import login_required
-from invoice.forms import InvoiceForm
 from invoice.models import Invoice
 from .models import  Claim, Manager, Product, DaysEntry,SalesPerson,Route,Shop,Routing
 from .forms import ClaimForm, ManagerForm,Days_Form,SalesPersonForm,RouteForm,ShopForm,RoutingForm,ProductForm
 from django.db.models import Sum
+from django.utils import timezone
+from datetime import datetime, timedelta
+from django.db.models import Q
 
 # HOME VIEW 
 def index(request):
@@ -165,16 +168,6 @@ def delete_route(request, pk):
 
 #=== shop_list views function
 def shop_list(request):
-    shops = Shop.objects.all().order_by('-id')
-    # shops = Shop.objects.order_by('-id')
-    return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
-#=== shop_list views function
-# def shop_list(request):
-#     shops = Shop.objects.all().order_by('-id')
-#     # shops = Shop.objects.order_by('-id')
-#     return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
-
-def shop_list(request):
     search_query = request.GET.get('q', '')
     if search_query:  # If a search query is provided
         shops = Shop.objects.search(search_query).order_by('-id')
@@ -322,20 +315,41 @@ def claim_delete(request, pk):
         return redirect('claim_list')
     return render(request, 'myapp/claim/delete_claim.html', {'claim': claim})
 
-#=== transaction_list views function
+
+
+
 # def transaction_list(request):
-#     transactions = Invoice.objects.all().order_by('-id')
+#     search_query = request.GET.get('q', '')  # Get the search query from the request GET parameters
+#     if search_query:  # If a search query is provided
+#         transactions = Invoice.objects.search(search_query).order_by('-id')
+#     else:
+#         transactions = Invoice.objects.all().order_by('-id')
+    
 #     return render(request, 'myapp/transaction/transaction_list.html', {'transactions': transactions})
-from django.db.models import Q
 
 def transaction_list(request):
     search_query = request.GET.get('q', '')  # Get the search query from the request GET parameters
+    start_date_str = request.GET.get('start_date', '')  # Get the start date from the request GET parameters
+    end_date_str = request.GET.get('end_date', '')  # Get the end date from the request GET parameters
+
+    # Convert date strings to datetime objects
+    start_date = None
+    end_date = None
+    if start_date_str:
+        start_date = timezone.make_aware(datetime.strptime(start_date_str, '%Y-%m-%d'))
+    if end_date_str:
+        end_date = timezone.make_aware(datetime.strptime(end_date_str, '%Y-%m-%d') + timedelta(days=1))
+
     if search_query:  # If a search query is provided
-        transactions = Invoice.objects.search(search_query).order_by('-id')
+        query = Q(customer__icontains=search_query) | Q(message__icontains=search_query)
+        transactions = Invoice.objects.filter(query).order_by('-id')
+    elif start_date and end_date:  # If start date and end date are provided
+        transactions = Invoice.objects.filter(date__range=(start_date, end_date)).order_by('-id')
     else:
         transactions = Invoice.objects.all().order_by('-id')
-    
+
     return render(request, 'myapp/transaction/transaction_list.html', {'transactions': transactions})
+
 
 #=== add_transaction views function
 # def add_transaction(request):

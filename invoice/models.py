@@ -35,17 +35,17 @@ class Invoice(models.Model):
     objects = InvoiceManager()
     
 
-    # def save(self, *args, **kwargs):
-    #     if isinstance(self.total_amount, str):
-    #         self.total_amount = Decimal(self.total_amount)
-    #     if isinstance(self.paid_amount, str):
-    #         self.paid_amount = Decimal(self.paid_amount)
+    def save(self, *args, **kwargs):
+        if isinstance(self.total_amount, str):
+            self.total_amount = Decimal(self.total_amount)
+        if isinstance(self.paid_amount, str):
+            self.paid_amount = Decimal(self.paid_amount)
 
-    #     # Calculate balance if both total_amount and paid_amount are not None
-    #     if self.total_amount is not None and self.paid_amount is not None:
-    #         self.balance = self.total_amount - self.paid_amount
+        # Calculate balance if both total_amount and paid_amount are not None
+        if self.total_amount is not None and self.paid_amount is not None:
+            self.balance = self.total_amount - self.paid_amount
 
-    #     super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 

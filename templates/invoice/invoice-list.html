@@ -10,26 +10,14 @@
     </div>
     <form action="{% url 'invoice:invoice-list' %}" method="post">{% csrf_token %}
         <div class="card">
+            <h4 class="card-title bg-success text-white center text-center py-3">View your invoice/transactions,make recoveries, or Create New Transaction/Invoice </h4>
             <div class="card-header">
-                <h5 class="card-title">All Orders / Change Order Status&nbsp;<button class="btn btn-info rounded">
-                        <a href="{% url 'invoice:invoice-create' %}" class="text-white">Create Invoice</a>
-                    </button></h5>
+                <h5 class="card-title">Press To Create New Invoice</h5>
+                    <button class="btn btn-info rounded bg-primary">
+                        <a href="{% url 'invoice:invoice-create' %}" class="text-white ">Create Invoice/Transaction</a>
+                    </button>
             </div>
             <div class="card-body">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Change Order Status</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <select class="form-control rounded" id="status" name="status">
-                                <option value="1">Paid</option>
-                                <option value="0">Not Paid</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-info rounded" name="mybtn">Change Status</button>
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -58,16 +46,9 @@
                                         <td>{{ invoice.total_amount }}</td>
                                         <td>{{ invoice.paid_amount }}</td>
                                         <td>{{ invoice.balance }}</td>
-                                        <td></td>
-                                        <!-- <td>
-                                            {% if invoice.get_status %}
-                                            <span class="badge badge-success">Paid</span>
-                                            {% else %}
-                                            <span class="badge badge-warning">Not Paid</span>
-                                            {% endif %}
-                                        </td> -->
+                                        <td>{{ invoice.previous_balance }}</td>
                                         <td><a href="{% url 'invoice:invoice-detail' id=invoice.id %}" class="btn btn-sm btn-info">View</a></td>
-                                        <td><a href="{% url 'invoice:create-recovery' id=invoice.id %}" class="btn btn-sm btn-info">pay Please</a></td> 
+                                        <td><a href="{% url 'invoice:create-recovery' id=invoice.id %}" class="btn btn-sm btn-danger">Pay me</a></td> 
                                     </tr>
                                     {% endfor %}
                                 </tbody>
