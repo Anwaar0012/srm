@@ -6,6 +6,7 @@ from .models import LineItem, Invoice,Recovery
 from .forms import LineItemFormset, InvoiceForm, RecoveryForm
 from myapp.models import Product, Shop
 from django.utils import timezone
+from django.contrib import messages
 
 
 import pdfkit
@@ -50,7 +51,7 @@ def createInvoice(request):
         form = InvoiceForm(request.POST)
         
         if form.is_valid():
-            
+    
             
             invoice = Invoice.objects.create(customer=form.data["customer"],
                     customer_email=form.data["customer_email"],
@@ -89,6 +90,8 @@ def createInvoice(request):
                     print(total)
             invoice.total_amount = total
             invoice.save()
+            messages.success(request, 'Invoice created successfully.')
+            return JsonResponse({'success': True}) 
             # Calculate and update the balance
             # invoice.balance = Decimal(str(invoice.total_amount)) - invoice.paid_amount
             # invoice.balance = invoice.total_amount - Decimal(invoice.paid_amount)
@@ -96,8 +99,12 @@ def createInvoice(request):
             
             try:
                 generate_PDF(request, id=invoice.id)
+                # messages.success(request, 'Invoice created successfully.')
+                # return JsonResponse({'success': True}) 
             except Exception as e:
-                print(f"********{e}********")
+                messages.error(request, f'An error occurred: {e}')
+                return JsonResponse({'error': str(e)}, status=500)
+                # print(f"********{e}********")
             return redirect('/invoice/')
     context = {
         "title" : "Invoice Generator",

@@ -1,5 +1,6 @@
 <!DOCTYPE html>{% load static %}
 <html lang="en">
+{% comment %} {% block head %} {% endcomment %}
 <head>
     <!-- Required meta tags -->
     <meta charset="UTF-8">
@@ -9,10 +10,13 @@
     <title>{% block title %}{% endblock %}</title>
 
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     {% block custom_css %}
     {% endblock %}
+   
+    {% block extra_head %}{% endblock %}
 </head>
+{% comment %} {% endblock head %} {% endcomment %}
 <body>
     <!-- Navbar -->
     {% include 'navbar.html' %}
@@ -31,18 +35,22 @@
 
 
 
-    <footer class="heading" style="background-color:black; color:#fff; padding:15px; text-align:center; font-size:1.5rem">
-        <p class="text-xs text-grey-700">Copyright (c) All rights reserved , Developed by Muhammad Anwaar (03012476595)</p>
+    <footer class="heading" style="background-color:black; color:#fff;  margin-top:50px; text-align:center; font-size:1.0rem">
+        <div style="padding:5px; ">
+        <p class="">Copyright (c) All rights reserved , Developed by Muhammad Anwaar (03012476595)</p>
+        </div>
     </footer>
 
     <!-- Bootstrap JS -->
+    {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Bulma Calendar JS -->
-    <script src="{% static 'js/bulma-calendar.min.js' %}"></script>
     <!-- Custom JS -->
-    {% block custom_js %}{% endblock %}
+    {% block custom_js %}
+    
+    {% endblock %}
+    {% block extra_scripts %}{% endblock extra_scripts %}
 </body>
 </html>
 

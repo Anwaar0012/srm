@@ -106,12 +106,49 @@
                 </form>
             </div>
         </div>
+        <div id="loadingSpinner" style="display: none;">
+            <!-- Loading spinner or message -->
+            <p>Loading...</p>
+        </div>
     </div>
 </section>
 {% endblock %}
 
 
 {% block custom_js %}
+<script>
+$(document).ready(function() {
+    $('#invoiceForm').submit(function(event) {
+        event.preventDefault(); // Prevent form submission
+        
+        // Show loading spinner
+        $('#loadingSpinner').show();
+        
+        // Send AJAX request to create invoice
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: $(this).serialize(),
+            success: function(response) {
+                // Hide loading spinner
+                $('#loadingSpinner').hide();
+                
+                if (response.success) {
+                    // Display success message or redirect user
+                } else {
+                    // Display error message
+                }
+            },
+            error: function(xhr, status, error) {
+                // Hide loading spinner
+                $('#loadingSpinner').hide();
+                
+                // Display error message
+            }
+        });
+    });
+});
+</script>
 
 <!-- for getting customer details -->
 <script>

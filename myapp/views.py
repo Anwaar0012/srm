@@ -168,11 +168,11 @@ def delete_route(request, pk):
 
 #=== shop_list views function
 def shop_list(request):
-    search_query = request.GET.get('q', '')
-    if search_query:  # If a search query is provided
-        shops = Shop.objects.search(search_query).order_by('-id')
-    else:
-        shops = Shop.objects.all().order_by('-id')
+    # search_query = request.GET.get('q', '')
+    # if search_query:  # If a search query is provided
+    #     shops = Shop.objects.search(search_query).order_by('-id')
+    # else:
+    shops = Shop.objects.all().order_by('-id')
     # shops = Shop.objects.order_by('-id')
     return render(request, 'myapp/shops/shop_list.html', {'shops': shops})
 

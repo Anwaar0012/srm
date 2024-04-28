@@ -1,13 +1,23 @@
 {% extends 'base.html' %}
 {% block routesactive %} active {% endblock routesactive %}
-
+{% block extra_head %} <style>
+    /* Custom styling for first and last buttons */
+    .paginate_button.first,
+    .paginate_button.last {
+        background-color: #b5f795; /* Change to your desired color */
+        color: #fff; /* Change to your desired text color */
+        border-color: #007bff; /* Change to your desired border color */
+    }
+</style>{% endblock %}
 {% block content %}
 <div class="container mt-4">
+    <h4 class="card-title bg-success text-white center text-center py-3">Routes List </h4>
     <!-- Link to Add Route page -->
     <a href="{% url 'add_route' %}" class="btn btn-primary mb-3">Add Route</a>
 
     <!-- Table to display routes data -->
-    <table class="table">
+    <div class="table-responsive">
+    <table id="route-table" class="table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -30,4 +40,23 @@
         </tbody>
     </table>
 </div>
+</div>
+{% endblock %}
+{% block custom_js %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#route-table').DataTable({
+            "pagingType": "full_numbers", // Use full pagination controls
+            "pageLength": 10, // Show 10 entries per page
+            "lengthMenu": [10, 25, 50, 75, 100], // Entries per page options
+            "language": {
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

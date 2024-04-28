@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 {% block transactionsactive %} active {% endblock %}
-
+{% block extra_head %} <style>
+    /* Custom styling for first and last buttons */
+    .paginate_button.first,
+    .paginate_button.last {
+        background-color: #b5f795; /* Change to your desired color */
+        color: #fff; /* Change to your desired text color */
+        border-color: #007bff; /* Change to your desired border color */
+    }
+</style>{% endblock %}
 {% block content %}
+<h4 class="card-title bg-success text-white center text-center py-3">Transactions </h4>
 <div class="container-fluid mt-4 px-0">
     <!-- Search form -->
     <form method="GET" action="{% url 'transaction_list' %}" class="mb-3">
@@ -28,7 +37,7 @@
 
     <!-- Table to display transactions data -->
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table  id="transactions-table" class="table table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -63,56 +72,27 @@
     </div>
 </div>
 {% endblock %}
-
-
-
-
-
-
-
-{% comment %} {% block content %}
-<div class="container-fluid mt-4 px-0">
-    <!-- Link to Add Shop page -->
-    <!-- Table to display shops data -->
-    {% comment %} <a href="{% url 'add_transaction' %}" class="btn btn-primary mb-3">Add New Transaction</a> 
-    <a href="#" class="btn btn-primary mb-3">Add New Transaction</a>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Routings</th>
-                    <th>Shop</th>
-                    <th>Manager</th>
-                    <th>Created_At</th>
-                    <th>Sales</th>
-                    <th>Payments</th>
-                    <th>Balance</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{forloop.counter}}</td>
-                    <td>{{ transaction.routing }}</td>
-                    <td>{{ transaction.customer}}</td>
-                    <td>{{ transaction.manager}}</td>
-                    <td>{{ transaction.date}}</td>
-                    <td>{{ transaction.total_amount}}</td>
-                    <td>{{ transaction.paid_amount}}</td>
-                    <td>{{ transaction.balance}}</td>
-                    <td>
-                        {% comment %} <a href="{% url 'delete_transaction' transaction.id %}" class="btn btn-sm btn-danger">Delete</a> 
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+{% block custom_js %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#transactions-table').DataTable({
+            "pagingType": "full_numbers", // Use full pagination controls
+            "pageLength": 10, // Show 10 entries per page
+            "lengthMenu": [10, 25, 50, 75, 100], // Entries per page options
+            "language": {
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
 
 
 
- {% endcomment %}
+
+
+

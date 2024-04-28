@@ -1,43 +1,86 @@
 {% extends 'base.html' %}
-{% block shopsactive %} active {% endblock shopsactive %}
-
+{% comment %} {% block transactionsactive %} active {% endblock %} {% endcomment %}
+{% block extra_head %} <style>
+    /* Custom styling for first and last buttons */
+    .paginate_button.first,
+    .paginate_button.last {
+        background-color: #b5f795; /* Change to your desired color */
+        color: #fff; /* Change to your desired text color */
+        border-color: #007bff; /* Change to your desired border color */
+    }
+</style>{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <!-- Link to Add Shop page -->
-    {% comment %} <a href="{% url 'add_shop' %}" class="btn btn-primary mb-3">Add Shop</a> {% endcomment %}
-    <!-- Table to display shops data -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Customer Name</th>
-                <th>Total Sale Amount</th>
-                <th>Order Date</th>
-                <th>Previous balance</th>
-                <th>Recovered Amount</th>
-                <th>Recovery Date</th>
-                <th>Current Balance</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for recovery in recoveryies_fetched %}
-            <tr>
-                {% comment %} <td>{{forloop.counter}}</td> {% endcomment %}
-                <td>{{recovery.id}}</td>
-                <td>{{ recovery.customer_name }}</td>
-                <td>{{ recovery.total_amount }}</td>
-                <td>{{ recovery.date }}</td>
-                <td>{{ recovery.balance }}</td>
-                <td>{{ recovery.new_paid_amount }}</td>
-                <td>{{ recovery.updated_date }}</td>
-                <td>{{ recovery.current_balance }}</td>
-                {% comment %} <td><a href="{% url 'edit_shop' shop.id %}" class="btn btn-sm btn-primary">Edit</a></td>
-                <td><a href="{% url 'delete_shop' shop.id %}" class="btn btn-sm btn-danger">Delete</a></td> {% endcomment %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h4 class="card-title bg-success text-white center text-center py-3">View your Recoveries on daily basis </h4>
+<div class="container-fluid mt-4 px-0">
+    <!-- Table to display transactions data -->
+    <div class="table-responsive">
+        <table  id="recovery-table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Total Sale Amount</th>
+                    <th>Order Date</th>
+                    <th>Previous balance</th>
+                    <th>Recovered Amount</th>
+                    <th>Recovery Date</th>
+                    <th>Current Balance</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recovery in recoveryies_fetched %}
+                <tr>
+                    <td>{{recovery.id}}</td>
+                    <td>{{ recovery.customer_name }}</td>
+                    <td>{{ recovery.total_amount }}</td>
+                    <td>{{ recovery.date }}</td>
+                    <td>{{ recovery.balance }}</td>
+                    <td>{{ recovery.new_paid_amount }}</td>
+                    <td>{{ recovery.updated_date }}</td>
+                    <td>{{ recovery.current_balance }}</td>
+                    <td>dd</td>
+                    <td>ds</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
+{% block custom_js %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+{% comment %} <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script> {% endcomment %}
+<script>
+    $(document).ready(function() {
+        $('#recovery-table').DataTable({
+            "pagingType": "full_numbers", // Use full pagination controls
+            "pageLength": 3, // Show 10 entries per page
+            "lengthMenu": [10, 25, 50, 75, 100], // Entries per page options
+            "language": {
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
