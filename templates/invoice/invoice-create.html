@@ -5,6 +5,13 @@
     <div class="container">
         <h1 class="heading" style="background-color:#008080; color:#fff; padding:15px; text-align:center; font-size:1.5rem">Create Invoice  - Fill Below Form </h1>
         <div class="card">
+            {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
             <div class="hero-body">
                 <form class="" method="POST" action="">
                     {% csrf_token %}
@@ -58,6 +65,16 @@
                             {{form.sale_types}}
                         </div>
                     </div>
+                    {% comment %} <div class="row justify-content-center my-3">
+                        <div class="col-md-4">
+                            <h6>balance</h6>
+                            {{ form.balance }}
+                        </div>
+                        <div>
+                            <h6>previous_Balance</h6>
+                            {{form.previous_balance}}
+                        </div>
+                    </div> {% endcomment %}
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
@@ -157,9 +174,10 @@ $(document).ready(function() {
         
         // Encode shop_name to handle spaces and special characters
         var encodedShopName = encodeURIComponent(shop_name);
+
         
         // Make AJAX request to fetch customer details
-        fetch(`http://127.0.0.1:8000/invoice/get-customer-details/${encodedShopName}/`)
+        fetch(`http://127.0.0.1:8000/invoice/get-customer-details/${shop_name}/`)
           .then(response => {
             if (!response.ok) {
               throw new Error('Network response was not ok');

@@ -6,7 +6,9 @@ from .models import LineItem, Invoice,Recovery
 from .forms import LineItemFormset, InvoiceForm, RecoveryForm
 from myapp.models import Product, Shop
 from django.utils import timezone
+# from django.contrib import messages
 from django.contrib import messages
+from datetime import datetime
 
 
 import pdfkit
@@ -64,7 +66,8 @@ def createInvoice(request):
                     sale_types=form.data['sale_types'],
                     routing=form.data["routing"],
                     paid_amount=form.data["paid_amount"],
-                    # balance=form.data["balance"]
+                    # balance=form.data["balance"],
+                    # previous_balance=form.data['previous_balance']
                     )
             # invoice.save()
             
@@ -90,13 +93,7 @@ def createInvoice(request):
                     print(total)
             invoice.total_amount = total
             invoice.save()
-            messages.success(request, 'Invoice created successfully.')
-            return JsonResponse({'success': True}) 
-            # Calculate and update the balance
-            # invoice.balance = Decimal(str(invoice.total_amount)) - invoice.paid_amount
-            # invoice.balance = invoice.total_amount - Decimal(invoice.paid_amount)
-            # invoice.save()
-            
+            # messages.success(request, 'Invoice created successfully.')
             try:
                 generate_PDF(request, id=invoice.id)
                 # messages.success(request, 'Invoice created successfully.')
@@ -106,12 +103,138 @@ def createInvoice(request):
                 return JsonResponse({'error': str(e)}, status=500)
                 # print(f"********{e}********")
             return redirect('/invoice/')
+    all_messages = messages.get_messages(request)
     context = {
         "title" : "Invoice Generator",
         "formset": formset,
         "form": form,
+        'messages':all_messages
     }
     return render(request, 'invoice/invoice-create.html', context)
+
+
+
+
+def editInvoice(request, id):
+    """
+    Invoice editing page.
+    Only admin has the authority to read and make changes here.
+    """
+
+    invoice = get_object_or_404(Invoice, pk=id)
+    try:
+        if request.method == 'POST':
+            # Update the attributes of the invoice object
+            invoice.customer = request.POST.get('customer')
+            invoice.customer_email = request.POST.get('customer_email')
+            invoice.billing_address = request.POST.get('billing_address')
+            # invoice.date = request.POST.get('date')
+            invoice.date = datetime.strptime(request.POST.get('date'), '%Y-%m-%d')
+            # invoice.due_date = request.POST.get('due_date')
+            invoice.due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%d')
+            invoice.message = request.POST.get('message')
+            invoice.salesperson = request.POST.get('salesperson')
+            invoice.manager = request.POST.get('manager')
+            invoice.routing = request.POST.get('routing')
+            invoice.total_amount = request.POST.get('total_amount')
+            invoice.paid_amount = request.POST.get('paid_amount')
+            invoice.balance = request.POST.get('balance')
+            invoice.previous_balance = request.POST.get('previous_balance')
+            # Update more fields as needed
+
+            # Save the changes
+            invoice.save()
+            return redirect('/invoice/')
+    except Exception as e:
+            messages.error(request, f'An error occurred: {e}')
+            # return JsonResponse({'error': str(e)}, status=500)
+
+    # Get all messages and pass them to the template context
+    all_messages = messages.get_messages(request)
+    context = {
+        'invoice': invoice,
+        'invoice_id': id,
+        'messages':all_messages
+    }
+    return render(request, 'invoice/invoice-edit.html', context)
+
+# def editInvoice(request, id):
+#     """
+#     Invoice editing page.
+#     Only admin has the authority to read and make changes here.
+#     """
+
+#     invoice = get_object_or_404(Invoice, id=id)
+
+#     if request.method == 'POST':
+#         form = InvoiceForm(request.POST, initial={'customer': invoice.customer,
+#                                                    'customer_email': invoice.customer_email,
+#                                                    'billing_address': invoice.billing_address,
+#                                                    'date': invoice.date,
+#                                                    'due_date': invoice.due_date,
+#                                                    'message': invoice.message,
+#                                                    'salesperson': invoice.salesperson,
+#                                                    'manager': invoice.manager,
+#                                                    'sale_types': invoice.sale_types,
+#                                                    'routing': invoice.routing,
+#                                                    'paid_amount': invoice.paid_amount,
+#                                                    'balance':invoice.balance,
+#                                                    'previous_balance':invoice.previous_balance
+
+#                                                    })
+#         if form.is_valid():
+#             # Update the existing invoice with the form data
+#             invoice.customer = form.cleaned_data['customer']
+#             invoice.customer_email = form.cleaned_data['customer_email']
+#             invoice.billing_address = form.cleaned_data['billing_address']
+#             invoice.date = form.cleaned_data['date']
+#             invoice.due_date = form.cleaned_data['due_date']
+#             invoice.message = form.cleaned_data['message']
+#             invoice.salesperson = form.cleaned_data['salesperson']
+#             invoice.manager = form.cleaned_data['manager']
+#             invoice.sale_types = form.cleaned_data['sale_types']
+#             invoice.routing = form.cleaned_data['routing']
+#             invoice.paid_amount = form.cleaned_data['paid_amount']
+#             invoice.balance = form.cleaned_data['balance']
+#             invoice.previous_balance = form.cleaned_data['previous_balance']
+
+#             invoice.save()
+#             messages.success(request, 'Invoice updated successfully.')
+#             return redirect('/invoice/')
+#     else:
+#         form = InvoiceForm(initial={'customer': invoice.customer,
+#                                      'customer_email': invoice.customer_email,
+#                                      'billing_address': invoice.billing_address,
+#                                      'date': invoice.date,
+#                                      'due_date': invoice.due_date,
+#                                      'message': invoice.message,
+#                                      'salesperson': invoice.salesperson,
+#                                      'manager': invoice.manager,
+#                                      'sale_types': invoice.sale_types,
+#                                      'routing': invoice.routing,
+#                                      'paid_amount': invoice.paid_amount,
+#                                      'balance':invoice.balance,
+#                                      'previous_balance':invoice.previous_balance
+#                                      })
+
+#     context = {
+#         "title" : "Edit Invoice",
+#         "form": form,
+#         "invoice_id":id,
+#     }
+#     return render(request, 'invoice/invoice-edit.html', context)
+
+def delete_invoice(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    try:
+        if request.method == 'POST':
+            invoice.delete()
+            return redirect('/invoice/')
+    except Exception as e:
+                messages.error(request, f'An error occurred: {e}')
+                return JsonResponse({'error': str(e)}, status=500)
+    
+    return render(request, 'invoice/delete_invoice_confirm.html', {'invoice': invoice})
 
 
 def view_PDF(request, id=None):

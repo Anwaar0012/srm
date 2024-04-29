@@ -11,6 +11,8 @@
 </style>{% endblock %}
 {% block content %}
 <h4 class="card-title bg-success text-white center text-center py-3">Transactions </h4>
+
+{% comment %} <a href="{% url 'invoice/create/' %}" class="btn btn-primary mb-3">Add New Transaction</a> {% endcomment %}
 <div class="container-fluid mt-4 px-0">
     <!-- Search form -->
     <form method="GET" action="{% url 'transaction_list' %}" class="mb-3">
@@ -31,11 +33,12 @@
             </div>
         </div>
         <div class="input-group">
-            <button type="submit" class="btn btn-primary mt-2">Search</button>
+            <button type="submit" class="btn btn-warning mt-2">Search</button>
         </div>
     </form>
 
     <!-- Table to display transactions data -->
+    <a href="{% url 'invoice:invoice-create' %}" role="button" class="btn btn-primary my-2 mx-2 my-sm-0" type="submit">Add New Transaction</a>
     <div class="table-responsive">
         <table  id="transactions-table" class="table table-bordered">
             <thead>
@@ -48,13 +51,12 @@
                     <th>Sales</th>
                     <th>Payments</th>
                     <th>Balance</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
                 {% for transaction in transactions %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td>{{ transaction.id}}</td>
                     <td>{{ transaction.routing }}</td>
                     <td>{{ transaction.customer }}</td>
                     <td>{{ transaction.manager }}</td>
@@ -62,9 +64,9 @@
                     <td>{{ transaction.total_amount }}</td>
                     <td>{{ transaction.paid_amount }}</td>
                     <td>{{ transaction.balance }}</td>
-                    <td>
+                    {% comment %} <td>
                         <!-- Add your delete button here -->
-                    </td>
+                    </td> {% endcomment %}
                 </tr>
                 {% endfor %}
             </tbody>

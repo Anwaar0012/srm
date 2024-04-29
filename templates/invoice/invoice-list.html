@@ -1,70 +1,75 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-12">
             <div class="card">
-                <h1 class="card-title text-center"></h1>
-            </div>
-        </div>
-    </div>
-    <form action="{% url 'invoice:invoice-list' %}" method="post">{% csrf_token %}
-        <div class="card">
-            <h4 class="card-title bg-success text-white center text-center py-3">View your invoice/transactions,make recoveries, or Create New Transaction/Invoice </h4>
-            <div class="card-header">
-                <h5 class="card-title">Press To Create New Invoice</h5>
-                    <button class="btn btn-info rounded bg-primary">
-                        <a href="{% url 'invoice:invoice-create' %}" class="text-white ">Create Invoice/Transaction</a>
-                    </button>
-            </div>
-            <div class="card-body">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>INVOICE</th>
-                                        <th>CUSTOMER</th>
-                                        <th>DATE</th>
-                                        <th>TOTAL AMOUNT</th>
-                                        <th>TOTAL PAID</th>
-                                        <th>BALANCE</th>
-                                        <th>Previous Balance</th>
-                                        <th>View</th>
-                                        <th>Recovery</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for invoice in invoices %}
-                                    <tr>
-                                        <td><input class="form-check-input" type="checkbox" value="{{ invoice.id }}" name="invoice_id" /></td>
-                                        <td>#{{ invoice.id }}</td>
-                                        <td>{{ invoice.customer }}</td>
-                                        <td>{{ invoice.date }}</td>
-                                        <td>{{ invoice.total_amount }}</td>
-                                        <td>{{ invoice.paid_amount }}</td>
-                                        <td>{{ invoice.balance }}</td>
-                                        <td>{{ invoice.previous_balance }}</td>
-                                        <td><a href="{% url 'invoice:invoice-detail' id=invoice.id %}" class="btn btn-sm btn-info">View</a></td>
-                                        <td><a href="{% url 'invoice:create-recovery' id=invoice.id %}" class="btn btn-sm btn-danger">Pay me</a></td> 
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="card-header bg-success text-white text-center">
+                    <h4>View Invoices/Transactions</h4>
+
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'invoice:invoice-create' %}" class="btn btn-lg btn-primary  mb-3">Create Invoice/Transaction</a>
+                    <div class="table-responsive">
+                        <table id="invoicelist-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Total Paid</th>
+                                    <th>Balance</th>
+                                    <th>Previous Balance</th>
+                                    <th>View</th>
+                                    <th>Recovery</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invoice in invoices %}
+                                <tr>
+                                    <td><input class="form-check-input" type="checkbox" value="{{ invoice.id }}" name="invoice_id" /></td>
+                                    <td>#{{ invoice.id }}</td>
+                                    <td>{{ invoice.customer }}</td>
+                                    <td>{{ invoice.date }}</td>
+                                    <td>{{ invoice.total_amount }}</td>
+                                    <td>{{ invoice.paid_amount }}</td>
+                                    <td>{{ invoice.balance }}</td>
+                                    <td>{{ invoice.previous_balance }}</td>
+                                    <td><a href="{% url 'invoice:invoice-detail' id=invoice.id %}" class="btn btn-sm btn-info">View</a></td>
+                                    <td><a href="{% url 'invoice:create-recovery' id=invoice.id %}" class="btn btn-sm btn-success">Pay me</a></td> 
+                                    <td><a href="{% url 'invoice:invoice-edit' id=invoice.id %}" class="btn btn-sm btn-primary">Edit</a></td> 
+                                    <td><a href="{% url 'invoice:invoice-delete' id=invoice.id %}" class="btn btn-sm btn-danger">Delete</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock %}
 
-
-
-
-
-
-
+{% block custom_js %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#invoicelist-table').DataTable({
+            "pagingType": "full_numbers", // Use full pagination controls
+            "lengthMenu": [10, 25, 50, 75, 100], // Entries per page options
+            "language": {
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

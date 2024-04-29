@@ -91,7 +91,7 @@ class InvoiceForm(forms.Form):
     initial=0,  # Set initial value to 0
     widget=forms.NumberInput(attrs={
         'class': 'form-control input quantity',
-        'placeholder': 'Actual Paid',
+        # 'placeholder': 'Actual Paid',
         'step': '0.01',  # Adjust the step attribute for decimal input
         'min': '0'  # Set minimum value if applicable
     }) 
@@ -106,6 +106,30 @@ class InvoiceForm(forms.Form):
             'rows':1
         })
     )
+
+    # balance = forms.DecimalField(
+    #         label='balance',
+    #         required=False,  # Set required attribute to False
+    #         initial=0,
+    #         widget=forms.NumberInput(attrs={
+    #             'class': 'form-control',
+    #             'step': '0.01',  # Adjust the step attribute for decimal input
+    #             'min': '0'
+    #         })
+    #     )
+    # previous_balance = forms.DecimalField(
+    #         label='Previous_balance',
+    #         required=False,  # Set required attribute to False
+    #         initial=0,
+    #         widget=forms.NumberInput(attrs={
+    #             'class': 'form-control',
+    #             'step': '0.01',  # Adjust the step attribute for decimal input
+    #             'min': '0'
+    #         })
+    #     )
+
+
+
  
 
     def clean_manager(self):
