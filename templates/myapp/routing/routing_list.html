@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block blogactive %} active {% endblock blogactive %}
 {% block extra_head %} <style>
@@ -64,4 +65,65 @@
         });
     });
 </script>
+=======
+{% extends 'base.html' %}
+{% block blogactive %} active {% endblock blogactive %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Link to Add Routing page -->
+    <a href="{% url 'add_routing' %}" class="btn btn-primary mb-3">Add Routing</a>
+
+    <!-- Table to display routings data -->
+    <table id="routingTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Routing</th>
+                <th>Routing Note</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dummy data -->
+            {% for routing in routings  %}
+            <tr>
+                <td>{{routing.id}}</td>
+                <td>{{routing.routing}}</td>
+                <td>{{routing.routing_note}}</td>
+
+                
+                <td><a href="{% url 'edit_routing' routing.id %}" class="btn btn-sm btn-primary">Edit</a></td>
+                <td><a href="{% url 'delete_routing' routing.id %}" class="btn btn-sm btn-danger">Delete</a></td>
+            </tr>
+            {% endfor %}
+           
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Include jQuery first -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<!-- Then include DataTables script -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+<!-- Finally, initialize DataTables -->
+<script>
+    $(document).ready(function() {
+        $('#routingTable').DataTable({
+            "columnDefs": [
+                { "targets": [0, 1, 3, 4], "searchable": false }
+            ],
+            "language": {
+                "search": "Search by Category: "
+            },
+            "dom": 'lrtip'
+        });
+    });
+</script>
+>>>>>>> origin/main
 {% endblock %}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block transactionsactive %} active {% endblock %}
 {% block extra_head %} <style>
@@ -98,3 +99,54 @@
 
 
 
+=======
+{% extends 'base.html' %}
+{% block transactionsactive %} active {% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4 px-0">
+    <!-- Link to Add Shop page -->
+    <!-- Table to display shops data -->
+    {% comment %} <a href="{% url 'add_transaction' %}" class="btn btn-primary mb-3">Add New Transaction</a> {% endcomment %}
+    <a href="#" class="btn btn-primary mb-3">Add New Transaction</a>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Routings</th>
+                    <th>Shop</th>
+                    <th>Manager</th>
+                    <th>Created_At</th>
+                    <th>Sales</th>
+                    <th>Payments</th>
+                    <th>Balance</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{ transaction.routing }}</td>
+                    <td>{{ transaction.customer}}</td>
+                    <td>{{ transaction.manager}}</td>
+                    <td>{{ transaction.date}}</td>
+                    <td>{{ transaction.total_amount}}</td>
+                    <td>{{ transaction.paid_amount}}</td>
+                    <td>{{ transaction.balance}}</td>
+                    <td>
+                        {% comment %} <a href="{% url 'delete_transaction' transaction.id %}" class="btn btn-sm btn-danger">Delete</a> {% endcomment %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+>>>>>>> origin/main

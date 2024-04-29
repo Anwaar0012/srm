@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
@@ -20,4 +21,28 @@
 </div>
 </div>
 </div>
+=======
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2 style="color: blue;">Delete Route</h2>
+                </div>
+    
+    <p style="margin:25px;">Are you sure you want to delete route "{{ route.route_name }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-success btn-block">Delete</button>
+        <br>
+    </form>
+</div>
+</div>
+</div>
+</div>
+>>>>>>> origin/main
 {% endblock %}

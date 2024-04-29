@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block routesactive %} active {% endblock routesactive %}
 {% block extra_head %} <style>
@@ -59,4 +60,38 @@
         });
     });
 </script>
+=======
+{% extends 'base.html' %}
+{% block routesactive %} active {% endblock routesactive %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Link to Add Route page -->
+    <a href="{% url 'add_route' %}" class="btn btn-primary mb-3">Add Route</a>
+
+    <!-- Table to display routes data -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Route Name</th>
+                <th>Route Notes</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for route in routes %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{ route.route_name }}</td>
+                <td>{{ route.route_notes }}</td>
+                <td><a href="{% url 'edit_route' route.id %}" class="btn btn-sm btn-primary">Edit</a></td>
+                <td><a href="{% url 'delete_route' route.id %}" class="btn btn-sm btn-danger">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+>>>>>>> origin/main
 {% endblock %}

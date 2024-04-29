@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 
 <!-- {% block daysactive %} active {% endblock daysactive %} -->
@@ -14,3 +15,72 @@
 </form>
 </div>
 {% endblock %}
+=======
+{% extends 'base.html' %}
+
+<!-- {% block daysactive %} active {% endblock daysactive %} -->
+
+{% block content %}
+<div class="container my-3">
+    <h3>Recovery</h3>
+    <form action={% url 'invoice:create-recovery' id=invoice_id %} method="post">{% csrf_token %}
+  <div class="form-group">
+    <label for="new_paid_amount">Recovered Amount</label>
+    <input type="number" class="form-control" id="new_paid_amount" name='new_paid_amount' placeholder="Enter Recovered Amount here">
+  </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+
+
+
+</div>
+{% endblock %}
+<!-- Include jQuery library
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+Your form
+<form method="post" id="recoveryForm">
+    {% csrf_token %}
+    
+    Display any form errors here if there are any 
+    {{ form.non_field_errors }}
+    
+    <Prepopulate fields with data from the Invoice object 
+    <label for="id_customer_name">Customer Name:</label>
+    <input type="text" id="id_customer_name" name="customer_name" readonly>
+    
+    <label for="id_total_amount">Total Amount:</label>
+    <input type="text" id="id_total_amount" name="total_amount" readonly>
+    
+    <label for="id_date">Date:</label>
+    <input type="text" id="id_date" name="date" readonly>
+
+    <label for="id_balance">Previous Balance:</label>
+    <input type="text" id="id_balance" name="balance" readonly>
+    
+    Render the form fields 
+    {{ form.new_paid_amount.label_tag }}
+    {{ form.new_paid_amount }}
+    {{ form.new_paid_amount.errors }}
+    
+    Submit button 
+    <button type="submit">Save</button>
+</form>
+
+<script>
+    // Populate form fields with data from Invoice object
+    $(document).ready(function() {
+        // Get values from Invoice object (replace 'invoiceData' with your actual object)
+        var customerName = "{{ invoice.customer }}";
+        var totalAmount = "{{ invoice.total_amount }}";
+        var date = "{{ invoice.date }}";
+        var balance = "{{ invoice.balance }}";
+        
+        // Assign values to form fields
+        $('#id_customer_name').val(customerName);
+        $('#id_total_amount').val(totalAmount);
+        $('#id_date').val(date);
+        $('#id_balance').val(balance);
+    });
+</script> -->
+>>>>>>> origin/main

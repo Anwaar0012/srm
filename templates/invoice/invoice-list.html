@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 
 {% block content %}
@@ -70,3 +71,94 @@
     });
 </script>
 {% endblock %}
+=======
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <h1 class="card-title text-center"></h1>
+            </div>
+        </div>
+    </div>
+    <form action="{% url 'invoice:invoice-list' %}" method="post">{% csrf_token %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">All Orders / Change Order Status&nbsp;<button class="btn btn-info rounded">
+                        <a href="{% url 'invoice:invoice-create' %}" class="text-white">Create Invoice</a>
+                    </button></h5>
+            </div>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Change Order Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <select class="form-control rounded" id="status" name="status">
+                                <option value="1">Paid</option>
+                                <option value="0">Not Paid</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info rounded" name="mybtn">Change Status</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>INVOICE</th>
+                                        <th>CUSTOMER</th>
+                                        <th>DATE</th>
+                                        <th>TOTAL AMOUNT</th>
+                                        <th>TOTAL PAID</th>
+                                        <th>BALANCE</th>
+                                        <th>Previous Balance</th>
+                                        <th>View</th>
+                                        <th>Recovery</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in invoices %}
+                                    <tr>
+                                        <td><input class="form-check-input" type="checkbox" value="{{ invoice.id }}" name="invoice_id" /></td>
+                                        <td>#{{ invoice.id }}</td>
+                                        <td>{{ invoice.customer }}</td>
+                                        <td>{{ invoice.date }}</td>
+                                        <td>{{ invoice.total_amount }}</td>
+                                        <td>{{ invoice.paid_amount }}</td>
+                                        <td>{{ invoice.balance }}</td>
+                                        <td></td>
+                                        <!-- <td>
+                                            {% if invoice.get_status %}
+                                            <span class="badge badge-success">Paid</span>
+                                            {% else %}
+                                            <span class="badge badge-warning">Not Paid</span>
+                                            {% endif %}
+                                        </td> -->
+                                        <td><a href="{% url 'invoice:invoice-detail' id=invoice.id %}" class="btn btn-sm btn-info">View</a></td>
+                                        <td><a href="{% url 'invoice:create-recovery' id=invoice.id %}" class="btn btn-sm btn-info">pay Please</a></td> 
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+>>>>>>> origin/main
