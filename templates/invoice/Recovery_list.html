@@ -10,8 +10,29 @@
     }
 </style>{% endblock %}
 {% block content %}
-<h4 class="card-title bg-success text-white center text-center py-3">View your Recoveries on daily basis </h4>
+<h6 class="card-title bg-success text-white center text-center py-3">View your Recoveries on daily basis </h6>
 <div class="container-fluid mt-4 px-0">
+    <!-- <form method="GET" action="{% url 'transaction_list' %}" class="mb-3"> -->
+        <!-- <div class="form-row my-2">
+        <div class="col">
+            <label for="searchbyName"><b>Search by customer/Shop Name, salesperson, manager, or date (YYYY-MM-DD)</b></label>
+            <input type="text" name="q" class="form-control" placeholder="Search by customer Name, salesperson, manager, or date (YYYY-MM-DD)" value="{{ request.GET.q }}">
+        </div>
+    </div>  -->
+        <!-- <div class="form-row">
+            <div class="col-auto">
+                <label for="fromDate"><b>From</b></label>
+                <input type="date" name="start_date" class="form-control" placeholder="Start Date" value="{{ request.GET.start_date }}">
+            </div>
+            <div class="col-auto">
+                <label for="toDate"><b>To</b></label>
+                <input type="date" name="end_date" class="form-control" placeholder="End Date" value="{{ request.GET.end_date }}">
+            </div>
+        </div>
+        <div class="input-group">
+            <button type="submit" class="btn btn-warning mt-2">Search</button>
+        </div>
+    </form> -->
     <!-- Table to display transactions data -->
     <div class="table-responsive">
         <table  id="recovery-table" class="table table-bordered">
@@ -40,8 +61,9 @@
                     <td>{{ recovery.new_paid_amount }}</td>
                     <td>{{ recovery.updated_date }}</td>
                     <td>{{ recovery.current_balance }}</td>
-                    <td>dd</td>
-                    <td>ds</td>
+                    {% comment %} <td><a href="{% url 'invoice:edit_recovery' recovery.id %}" class="btn btn-sm btn-primary" disabled>Edit</a></td> {% endcomment %}
+                    <td><a href="#" class="btn btn-sm btn-primary" disabled>Edit</a></td>
+                    <td><a href="{% url 'invoice:delete_recovery' recovery.id %}" class="btn btn-sm btn-danger">Delete</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

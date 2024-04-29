@@ -77,7 +77,7 @@ def createInvoice(request):
             total = 0
             for form in formset:
                 service = form.cleaned_data.get('service')
-                description = form.cleaned_data.get('description')
+                # description = form.cleaned_data.get('description')
                 quantity = form.cleaned_data.get('quantity')
                 rate = form.cleaned_data.get('rate')
                 if service and quantity and rate:
@@ -86,7 +86,7 @@ def createInvoice(request):
                     total += amount
                     LineItem(customer=invoice,
                             service=service,
-                            description=description,
+                            # description=description,
                             quantity=quantity,
                             rate=rate,
                             amount=amount).save()
@@ -377,44 +377,147 @@ def recovery_list(request):
     # print(days_fetched)
     return render(request, 'invoice/Recovery_list.html', {'recoveryies_fetched': recoveryies_fetched})
 
+#=== edit_route views function
+def edit_recovery(request, pk):
+    recovery = get_object_or_404(Recovery, pk=pk)
+    if request.method == 'POST':
+        form = RecoveryForm(request.POST, instance=recovery)
+        if form.is_valid():
+            form.save()
+            return redirect('invoice:recovery-list')
+    else:
+        form = RecoveryForm(instance=recovery)
+    return render(request, 'invoice/edit_recovery.html', {'form': form})
+
+#=== delete_route views function
+def delete_recovery(request, pk):
+    recovery = get_object_or_404(Recovery, pk=pk)
+    if request.method == 'POST':
+        recovery.delete()
+        return redirect('invoice:recovery-list')
+    return render(request, 'invoice/delete_recovery.html', {'route': recovery})
+
 from openpyxl import Workbook
 
+# def generate_invoice_excel_report(request):
+#     if request.method == 'GET':
+#             # Handle GET request (render a form, for example)
+#             return render(request, 'invoice/main_invoice_excel.html', context={})
+#     elif request.method == 'POST':
+#         # Fetch all invoices from the database
+#         invoices = Invoice.objects.all()
+#         # Create a new Excel workbook
+#         wb = Workbook()
+#         # Add a worksheet for the report
+#         ws = wb.active
+#         ws.title = "Invoice Report"
+#         # Write headers
+#         headers = [
+#             "Customer", "Customer Email", "Billing Address", "Date", "Due Date", "Message",
+#             "Total Amount", "Salesperson", "Manager", "Routing", "Paid Amount", "Balance",
+#             "Previous Balance", "Sale Types", "Status"
+#         ]
+#         ws.append(headers)
+#         # Write invoice data rows
+#         for invoice in invoices:
+#             row = [
+#                 invoice.customer, invoice.customer_email, invoice.billing_address,
+#                 invoice.date, invoice.due_date, invoice.message,
+#                 invoice.total_amount, invoice.salesperson, invoice.manager,
+#                 invoice.routing, invoice.paid_amount, invoice.balance,
+#                 invoice.previous_balance, invoice.sale_types, invoice.status
+#             ]
+#             ws.append(row)
+#         # Create HTTP response with Excel content type
+#         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+#         response['Content-Disposition'] = 'attachment; filename=invoice_report.xlsx'
+#         # Save the workbook to the HTTP response
+#         wb.save(response)
+
+#         return response
+    
 def generate_invoice_excel_report(request):
     if request.method == 'GET':
-            # Handle GET request (render a form, for example)
-            return render(request, 'invoice/main_invoice_excel.html', context={})
+        # Handle GET request (render a form, for example)
+        return render(request, 'invoice/main_invoice_excel.html', context={})
     elif request.method == 'POST':
-        # Fetch all invoices from the database
-        invoices = Invoice.objects.all()
-        # Create a new Excel workbook
-        wb = Workbook()
-        # Add a worksheet for the report
-        ws = wb.active
-        ws.title = "Invoice Report"
-        # Write headers
-        headers = [
-            "Customer", "Customer Email", "Billing Address", "Date", "Due Date", "Message",
-            "Total Amount", "Salesperson", "Manager", "Routing", "Paid Amount", "Balance",
-            "Previous Balance", "Sale Types", "Status"
-        ]
-        ws.append(headers)
-        # Write invoice data rows
-        for invoice in invoices:
-            row = [
-                invoice.customer, invoice.customer_email, invoice.billing_address,
-                invoice.date, invoice.due_date, invoice.message,
-                invoice.total_amount, invoice.salesperson, invoice.manager,
-                invoice.routing, invoice.paid_amount, invoice.balance,
-                invoice.previous_balance, invoice.sale_types, invoice.status
-            ]
-            ws.append(row)
-        # Create HTTP response with Excel content type
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=invoice_report.xlsx'
-        # Save the workbook to the HTTP response
-        wb.save(response)
+        report_type = request.POST.get('report_type')
+        
+        if report_type == 'all':
+            return generate_report_all_data(request)
+        elif report_type == 'by_manager':
+            manager_name = request.POST.get('manager_name')
+            return generate_report_by_manager(request, manager_name)
+        elif report_type == 'by_salesman':
+            salesman_name = request.POST.get('salesman_name')
+            return generate_report_by_salesman(request, salesman_name)
+        elif report_type == 'between_dates':
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
+            return generate_report_between_dates(request, start_date, end_date)
+        else:
+            # Default behavior if no report type specified
+            return HttpResponse("Invalid report type")
+        
+def generate_report_all_data(request):
+    # Fetch all invoices from the database
+    invoices = Invoice.objects.all()
+    return generate_excel_report(invoices)
 
-        return response
+
+def generate_report_by_manager(request, manager_name):
+    # Fetch invoices filtered by manager from the database
+    invoices = Invoice.objects.filter(manager=manager_name)
+    return generate_excel_report(invoices)
+
+def generate_report_by_salesman(request, salesman_name):
+    # Fetch invoices filtered by salesman from the database
+    invoices = Invoice.objects.filter(salesperson=salesman_name)
+    return generate_excel_report(invoices)
+
+def generate_report_between_dates(request, start_date, end_date):
+    # Fetch invoices between the specified dates from the database
+    invoices = Invoice.objects.filter(date__range=[start_date, end_date])
+    return generate_excel_report(invoices)
+
+def generate_excel_report(invoices):
+    # Create a new Excel workbook
+    wb = Workbook()
+    # Add a worksheet for the report
+    ws = wb.active
+    ws.title = "Invoice Report"
+    # Write headers
+    headers = [
+        "Customer", "Customer Email", "Billing Address", "Date", "Due Date", "Message",
+        "Total Amount", "Salesperson", "Manager", "Routing", "Paid Amount", "Balance",
+        "Previous Balance", "Sale Types", "Status"
+    ]
+    ws.append(headers)
+    # Write invoice data rows
+    for invoice in invoices:
+        row = [
+            invoice.customer, invoice.customer_email, invoice.billing_address,
+            invoice.date, invoice.due_date, invoice.message,
+            invoice.total_amount, invoice.salesperson, invoice.manager,
+            invoice.routing, invoice.paid_amount, invoice.balance,
+            invoice.previous_balance, invoice.sale_types, invoice.status
+        ]
+        ws.append(row)
+    # Create HTTP response with Excel content type
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=invoice_report.xlsx'
+    # Save the workbook to the HTTP response
+    wb.save(response)
+
+    return response
+
+
+
+
+
+
+
+
     
 # name,address,owner_number,owner_cnic
 def generate_shop_excel_report(request):

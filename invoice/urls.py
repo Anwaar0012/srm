@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import InvoiceListView, createInvoice, view_PDF,get_details_customer,get_product_rate,create_recovery,recovery_list,generate_invoice_excel_report,generate_shop_excel_report,generate_recoveries_excel_report,delete_invoice,editInvoice
+from .views import InvoiceListView, createInvoice, view_PDF,get_details_customer,get_product_rate,create_recovery,recovery_list,generate_invoice_excel_report,generate_shop_excel_report,generate_recoveries_excel_report,delete_invoice,editInvoice,edit_recovery,delete_recovery
 
 app_name = 'invoice'
 urlpatterns = [
@@ -12,6 +12,8 @@ urlpatterns = [
     # path('invoice-download/<id>', generate_PDF, name='invoice-download'),
     path('create-recovery/<id>', create_recovery, name='create-recovery'),
     path('recovery-list/',recovery_list, name='recovery-list'),
+    path('edit_recovery/<int:pk>/', edit_recovery, name='edit_recovery'),
+    path('delete_recovery/<int:pk>/', delete_recovery, name='delete_recovery'),
     path('get-customer-details/<str:shop_name>/', get_details_customer, name='get_customer_details'),
     path('get-product-rate/<str:product_name>/', get_product_rate, name='get_product_rate'),
     path('gen-report-invoice/', generate_invoice_excel_report, name='generate_invoice_report'),

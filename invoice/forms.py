@@ -195,29 +195,33 @@ class LineItemForm(forms.Form):
             'class': 'form-control product-select',
         })
     )
-    description = forms.CharField(
-        label='Description',
-        required=False,  # Set required attribute to False
-        widget=forms.TextInput(attrs={
-            'class': 'form-control input',
-            'placeholder': 'Any other info',
-            "rows":1
-        })
-    )
+    # description = forms.CharField(
+    #     label='Description',
+    #     required=False,  # Set required attribute to False
+    #     widget=forms.TextInput(attrs={
+    #         'class': 'form-control input',
+    #         'placeholder': 'Any other info',
+    #         "rows":1
+    #     })
+    # )
     quantity = forms.DecimalField(
         label='Qty',
-        widget=forms.TextInput(attrs={
+        widget=forms.NumberInput(attrs={
             'class': 'form-control input quantity',
-            'placeholder': 'Quantity'
+            'placeholder': 'Quantity',
+            'step': '0.01',  # Adjust the step attribute for decimal input
+            'min': '0'  # Set minimum value if applicable
         }) 
         
     )
     rate = forms.DecimalField(
         label='Rate ',
-        widget=forms.TextInput(attrs={
+        widget=forms.NumberInput(attrs={
             # 'id': 'rate',
+            'placeholder': 'rate',
             'class': 'form-control input rate myrate',
-            # 'placeholder': 'Rate'
+            'step': '0.01',  # Adjust the step attribute for decimal input
+            'min': '0'  # Set minimum value if applicable
         })
         
     )

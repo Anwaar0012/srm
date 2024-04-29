@@ -72,15 +72,15 @@
           <a class="nav-link {% if request.path == '/myapp/transactions/' %}active-link{% endif %}"
             href="{% url 'transaction_list' %}">Transaction List</a>
         </li>
+        <li class="nav-item {% block claimactive %}{% endblock claimactive%}">
+          <a class="nav-link {% if request.path == '/myapp/claims/' %}active-link{% endif %}"
+            href="{% url 'claim_list' %}">Claims</a>
+        </li>
         <li class="nav-item">
           <a href="/invoice/recovery-list/" role="button" class="btn btn-outline-success my-2 mx-2 my-sm-0" type="submit">Recoveries</a>
         </li>
         <li class="nav-item">
           <a href="/invoice" role="button" class="btn btn-outline-success my-2 mx-2 my-sm-0" type="submit">Invoice</a>
-        </li>
-        <li class="nav-item">
-          <a href="{% url 'logout' %}" role="button" class="btn btn-outline-success my-2 my-sm-0"
-            type="submit">Logout</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -92,6 +92,11 @@
             <li><a class="dropdown-item" href="/invoice/gen-report-recovery">Recovery</a></li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a href="{% url 'logout' %}" role="button" class="btn btn-outline-success my-2 my-sm-0"
+            type="submit">Logout</a>
+        </li>
+
       </ul>
       {% else %}
       
